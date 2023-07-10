@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  amro-assignment-mariadb:
+    image: mariadb:10.8.3
+    environment:
+      - MYSQL_DATABASE=recipes
+      - MYSQL_USER=recipesUser
+      - MYSQL_ROOT_PASSWORD=recipesPass
+      - MYSQL_PASSWORD=recipesPass
+    ports:
+      - "127.0.0.1:3306:3306"

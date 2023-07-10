@@ -1,0 +1,18 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
+services:
+  recipeapi:
+    image: recipeapi
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://localhost:3306/recipes?useLegacyDatetimeCode=false&serverTimezone=UTC
+  local-mariadb:
+    image: mariadb:10.8.3
+    environment:
+      - MYSQL_DATABASE=recipes
+      - MYSQL_USER=recipesUser
+      - MYSQL_ROOT_PASSWORD=recipesPass
+      - MYSQL_PASSWORD=recipesPass
+    ports:
+      - "127.0.0.1:3306:3306"
