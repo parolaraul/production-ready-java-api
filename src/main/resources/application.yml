@@ -21,6 +21,11 @@ spring:
       hibernate.query.in_clause_parameter_padding: true
     hibernate:
       ddl-auto: update
-
+springdoc:
+  show-actuator: true
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui-recipes.html
 server:
   port: 8081

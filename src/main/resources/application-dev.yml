@@ -13,3 +13,6 @@ spring:
     h2:
       console:
         enabled: true
+
+application:
+  api-key: '8ba20537-61f2-4ccd-a796-39478a6149a7'
