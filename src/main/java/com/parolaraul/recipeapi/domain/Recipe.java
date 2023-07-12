@@ -53,6 +53,11 @@ public class Recipe implements Serializable {
         this.id = id;
     }
 
+    public Recipe category(RecipeCategory category) {
+        this.setCategory(category);
+        return this;
+    }
+
     public RecipeCategory getCategory() {
         return category;
     }
