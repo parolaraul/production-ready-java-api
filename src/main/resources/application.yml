@@ -22,10 +22,13 @@ spring:
     hibernate:
       ddl-auto: update
 springdoc:
+  default-produces-media-type: application/json
   show-actuator: true
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui-recipes.html
+  enable-spring-security: true
+
 server:
   port: 8081

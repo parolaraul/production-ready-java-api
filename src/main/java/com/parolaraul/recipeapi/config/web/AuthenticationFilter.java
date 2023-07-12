@@ -4,7 +4,8 @@ import com.parolaraul.recipeapi.config.ApplicationProperties;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -16,10 +17,15 @@ import java.io.PrintWriter;
 
 public class AuthenticationFilter implements Filter {
 
+    private final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
+
     private static final String API_KEY_HEADER_NAME = "X-API-KEY";
 
-    @Autowired
     ApplicationProperties applicationProperties;
+
+    public AuthenticationFilter(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -32,7 +38,7 @@ public class AuthenticationFilter implements Filter {
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             PrintWriter writer = httpResponse.getWriter();
-            writer.print(exp.getMessage());
+            writer.print("{ \"error\": \"" + exp.getMessage() + "\" }");
             writer.flush();
             writer.close();
         }
@@ -42,6 +48,7 @@ public class AuthenticationFilter implements Filter {
 
     public Authentication getAuthentication(HttpServletRequest request) {
         String apiKey = request.getHeader(API_KEY_HEADER_NAME);
+        log.debug("authenticating with api key: " + apiKey);
         if (apiKey == null || !apiKey.equals(applicationProperties.getApiKey())) {
             throw new BadCredentialsException("Invalid API Key");
         }

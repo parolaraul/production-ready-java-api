@@ -14,5 +14,9 @@ spring:
       console:
         enabled: true
 
+logging:
+  level:
+    root: debug
+
 application:
   api-key: '8ba20537-61f2-4ccd-a796-39478a6149a7'
