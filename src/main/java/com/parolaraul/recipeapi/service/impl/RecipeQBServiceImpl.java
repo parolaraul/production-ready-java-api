@@ -68,7 +68,7 @@ public class RecipeQBServiceImpl extends QueryBuilderService<Recipe> implements 
                 specification = specification.and(buildFilterSpecification(criteria.getInstructions(), Recipe_.instructions));
             }
             if (criteria.getIngredients() != null) {
-                specification.and(
+                specification = specification.and(
                         buildSpecification(
                                 criteria.getIngredients(),
                                 root -> root.join(Recipe_.ingredients, JoinType.LEFT).get(Ingredient_.name)

@@ -6,8 +6,25 @@ import java.util.Objects;
 
 public class RecipeCriteria implements Criteria {
 
+    /**
+     * Class for filtering RecipeCategory enum
+     */
+    public static class RecipeCategoryFilter extends Filter<RecipeCategory> {
+
+        public RecipeCategoryFilter() {}
+
+        public RecipeCategoryFilter(RecipeCategoryFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public RecipeCategoryFilter copy() {
+            return new RecipeCategoryFilter(this);
+        }
+    }
+
     Filter<Long> id;
-    Filter<RecipeCategory> category;
+    RecipeCategoryFilter category;
     Filter<Integer> servings;
     Filter<String> ingredients;
     Filter<String> instructions;
@@ -31,11 +48,11 @@ public class RecipeCriteria implements Criteria {
         this.id = id;
     }
 
-    public Filter<RecipeCategory> getCategory() {
+    public RecipeCategoryFilter getCategory() {
         return category;
     }
 
-    public void setCategory(Filter<RecipeCategory> category) {
+    public void setCategory(RecipeCategoryFilter category) {
         this.category = category;
     }
 

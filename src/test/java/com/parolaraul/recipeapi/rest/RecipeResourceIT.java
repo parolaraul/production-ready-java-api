@@ -162,7 +162,7 @@ class RecipeResourceIT {
         getWithCriteriaFound("id.eq=" + recipe.getId().intValue());
         getWithCriteriaNotFound("id.eq=" + 9999L);
 
-        // Category Filter TODO fix Enum filter
+        // Category Filter
         getWithCriteriaFound("category.eq=" + DEFAULT_VEGETARIAN);
         getWithCriteriaNotFound("category.eq=" + UPDATED_VEGETARIAN);
 
@@ -176,7 +176,7 @@ class RecipeResourceIT {
 
         // Instructions Filter
         getWithCriteriaFound("instructions.contains=" + DEFAULT_INSTRUCTIONS);
-        getWithCriteriaNotFound("instructions.notContains=" + UPDATED_INSTRUCTIONS);
+        getWithCriteriaNotFound("instructions.notContains=" + DEFAULT_INSTRUCTIONS);
 
         // Combined Filter
         getWithCriteriaFound("servings.eq=" + DEFAULT_SERVINGS + "&ingredients.in=" + DEFAULT_INGREDIENT);
