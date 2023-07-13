@@ -3,14 +3,13 @@ package com.parolaraul.recipeapi.service.criteria;
 import com.parolaraul.recipeapi.domain.RecipeCategory;
 
 import java.util.Objects;
-import java.util.Set;
 
 public class RecipeCriteria implements Criteria {
 
     Filter<Long> id;
     Filter<RecipeCategory> category;
     Filter<Integer> servings;
-    Filter<Set<String>> ingredients;
+    Filter<String> ingredients;
     Filter<String> instructions;
 
     public RecipeCriteria() {
@@ -22,11 +21,6 @@ public class RecipeCriteria implements Criteria {
         this.servings = other.servings == null ? null : other.servings.copy();
         this.ingredients = other.ingredients == null ? null : other.ingredients.copy();
         this.instructions = other.instructions == null ? null : other.instructions.copy();
-    }
-
-    @Override
-    public RecipeCriteria copy() {
-        return new RecipeCriteria(this);
     }
 
     public Filter<Long> getId() {
@@ -53,11 +47,11 @@ public class RecipeCriteria implements Criteria {
         this.servings = servings;
     }
 
-    public Filter<Set<String>> getIngredients() {
+    public Filter<String> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Filter<Set<String>> ingredients) {
+    public void setIngredients(Filter<String> ingredients) {
         this.ingredients = ingredients;
     }
 

@@ -5,6 +5,7 @@ import com.parolaraul.recipeapi.TestUtil;
 import com.parolaraul.recipeapi.domain.Ingredient;
 import com.parolaraul.recipeapi.domain.Recipe;
 import com.parolaraul.recipeapi.domain.RecipeCategory;
+import com.parolaraul.recipeapi.repository.IngredientRepository;
 import com.parolaraul.recipeapi.repository.RecipeRepository;
 import com.parolaraul.recipeapi.service.dto.RecipeDTO;
 import com.parolaraul.recipeapi.service.mapper.RecipeMapper;
@@ -19,10 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,11 +49,8 @@ class RecipeResourceIT {
     private static final String DEFAULT_INSTRUCTIONS = "AAAAAAAAAA";
     private static final String UPDATED_INSTRUCTIONS = "BBBBBBBBBB";
 
-    private static final String DEFAULT_INGREDIENT = "potatoes";
-    private static final String UPDATED_INGREDIENT = "eggs";
-
-    private static final Set<Ingredient> DEFAULT_INGREDIENTS = new HashSet<>();
-    private static final Set<Ingredient> UPDATED_INGREDIENTS = new HashSet<>();
+    private static final String DEFAULT_INGREDIENT = "CCCCCCCCCC";
+    private static final String UPDATED_INGREDIENT = "DDDDDDDDDD";
 
     private static final String ENTITY_API_URL = "/api/recipes";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -65,6 +60,9 @@ class RecipeResourceIT {
 
     @Autowired
     private RecipeRepository recipeRepository;
+
+    @Autowired
+    private IngredientRepository ingredientRepository;
 
     @Autowired
     private RecipeMapper recipeMapper;
@@ -77,19 +75,35 @@ class RecipeResourceIT {
 
     private Recipe recipe;
 
+    private Set<Ingredient> IngredientsSet = new HashSet<>();
+
     /**
      * Create an entity for this test.
      * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Recipe createEntity(EntityManager em) {
-        return new Recipe().category(DEFAULT_VEGETARIAN).servings(DEFAULT_SERVINGS).instructions(DEFAULT_INSTRUCTIONS).ingredients(DEFAULT_INGREDIENTS);
+    public static Recipe createEntity(EntityManager em, Set<Ingredient> IngredientsSet) {
+        return new Recipe().category(DEFAULT_VEGETARIAN).servings(DEFAULT_SERVINGS).instructions(DEFAULT_INSTRUCTIONS).ingredients(IngredientsSet);
+    }
+
+
+    /**
+     * Create an entity for this test.
+     * <p>
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Ingredient createIngredientEntity(EntityManager em) {
+        return new Ingredient().name(DEFAULT_INGREDIENT);
     }
 
     @BeforeEach
     public void initTest() {
-        recipe = createEntity(em);
+        Ingredient ingredient = createIngredientEntity(em);
+        ingredientRepository.saveAndFlush(ingredient);
+        IngredientsSet = Collections.singleton(ingredient);
+        recipe = createEntity(em, IngredientsSet);
     }
 
     @Test
@@ -111,7 +125,7 @@ class RecipeResourceIT {
         assertThat(testRecipe.getCategory()).isEqualTo(DEFAULT_VEGETARIAN);
         assertThat(testRecipe.getServings()).isEqualTo(DEFAULT_SERVINGS);
         assertThat(testRecipe.getInstructions()).isEqualTo(DEFAULT_INSTRUCTIONS);
-        assertThat(testRecipe.getIngredients()).isEqualTo(DEFAULT_INGREDIENTS);
+        assertThat(testRecipe.getIngredients()).isEqualTo(IngredientsSet);
     }
 
     @Test
@@ -137,7 +151,7 @@ class RecipeResourceIT {
 
     @Test
     @Transactional
-    void getAllRecipes() throws Exception {
+    void getRecipesCriteria() throws Exception {
         // Initialize the database
         recipeRepository.saveAndFlush(recipe);
 
@@ -148,7 +162,7 @@ class RecipeResourceIT {
         getWithCriteriaFound("id.eq=" + recipe.getId().intValue());
         getWithCriteriaNotFound("id.eq=" + 9999L);
 
-        // Category Filter
+        // Category Filter TODO fix Enum filter
         getWithCriteriaFound("category.eq=" + DEFAULT_VEGETARIAN);
         getWithCriteriaNotFound("category.eq=" + UPDATED_VEGETARIAN);
 
@@ -180,10 +194,11 @@ class RecipeResourceIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(recipe.getId().intValue())))
-                .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_VEGETARIAN)))
+                .andExpect(jsonPath("$.[*].category").value(recipe.getCategory().toString()))
                 .andExpect(jsonPath("$.[*].servings").value(hasItem(DEFAULT_SERVINGS)))
                 .andExpect(jsonPath("$.[*].instructions").value(hasItem(DEFAULT_INSTRUCTIONS)))
-                .andExpect(jsonPath("$.[*].ingredients").isArray());
+                .andExpect(jsonPath("$.[*].ingredients[0].id").value(IngredientsSet.stream().toList().get(0).getId().intValue()))
+                .andExpect(jsonPath("$.[*].ingredients[0].name").value(IngredientsSet.stream().toList().get(0).getName()));
     }
 
     private void getWithCriteriaNotFound(String filter) throws Exception {
@@ -246,9 +261,12 @@ class RecipeResourceIT {
 
         // Update the recipe
         Recipe updatedRecipe = recipeRepository.findById(recipe.getId()).get();
+        Ingredient updatedIngredient = new Ingredient().name(UPDATED_INGREDIENT);
+        ingredientRepository.saveAndFlush(updatedIngredient);
         // Disconnect from session so that the updates on updatedRecipe are not directly saved in db
         em.detach(updatedRecipe);
-        updatedRecipe.category(UPDATED_VEGETARIAN).servings(UPDATED_SERVINGS).instructions(UPDATED_INSTRUCTIONS).ingredients(UPDATED_INGREDIENTS);
+        Set<Ingredient> updatedIngredients = Collections.singleton(updatedIngredient);
+        updatedRecipe.category(UPDATED_VEGETARIAN).servings(UPDATED_SERVINGS).instructions(UPDATED_INSTRUCTIONS).ingredients(updatedIngredients);
         RecipeDTO recipeDTO = recipeMapper.toDto(updatedRecipe);
 
         restRecipeMockMvc
@@ -267,7 +285,7 @@ class RecipeResourceIT {
         assertThat(testRecipe.getCategory()).isEqualTo(UPDATED_VEGETARIAN);
         assertThat(testRecipe.getServings()).isEqualTo(UPDATED_SERVINGS);
         assertThat(testRecipe.getInstructions()).isEqualTo(UPDATED_INSTRUCTIONS);
-        assertThat(testRecipe.getIngredients()).isEqualTo(UPDATED_INGREDIENTS);
+        assertThat(testRecipe.getIngredients()).isEqualTo(updatedIngredients);
     }
 
     @Test

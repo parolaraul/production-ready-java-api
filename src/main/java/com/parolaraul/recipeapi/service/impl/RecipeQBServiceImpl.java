@@ -1,5 +1,6 @@
 package com.parolaraul.recipeapi.service.impl;
 
+import com.parolaraul.recipeapi.domain.Ingredient_;
 import com.parolaraul.recipeapi.domain.Recipe;
 import com.parolaraul.recipeapi.domain.Recipe_;
 import com.parolaraul.recipeapi.repository.RecipeRepository;
@@ -8,6 +9,7 @@ import com.parolaraul.recipeapi.service.criteria.QueryBuilderService;
 import com.parolaraul.recipeapi.service.criteria.RecipeCriteria;
 import com.parolaraul.recipeapi.service.dto.RecipeDTO;
 import com.parolaraul.recipeapi.service.mapper.RecipeMapper;
+import jakarta.persistence.criteria.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -55,6 +57,23 @@ public class RecipeQBServiceImpl extends QueryBuilderService<Recipe> implements 
         if (criteria != null) {
             if (criteria.getId() != null) {
                 specification = specification.and(buildFilterSpecification(criteria.getId(), Recipe_.id));
+            }
+            if (criteria.getCategory() != null) {
+                specification = specification.and(buildFilterSpecification(criteria.getCategory(), Recipe_.category));
+            }
+            if (criteria.getServings() != null) {
+                specification = specification.and(buildFilterSpecification(criteria.getServings(), Recipe_.servings));
+            }
+            if (criteria.getInstructions() != null) {
+                specification = specification.and(buildFilterSpecification(criteria.getInstructions(), Recipe_.instructions));
+            }
+            if (criteria.getIngredients() != null) {
+                specification.and(
+                        buildSpecification(
+                                criteria.getIngredients(),
+                                root -> root.join(Recipe_.ingredients, JoinType.LEFT).get(Ingredient_.name)
+                        )
+                );
             }
         }
         return specification;
