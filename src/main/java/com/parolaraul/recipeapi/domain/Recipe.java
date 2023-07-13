@@ -22,6 +22,7 @@ public class Recipe implements Serializable {
     private Long id;
 
     @Column(name = "category")
+    @Enumerated(value = EnumType.STRING)
     private RecipeCategory category;
 
     @Column(name = "servings")
