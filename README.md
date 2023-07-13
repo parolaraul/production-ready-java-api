@@ -25,12 +25,33 @@ Please ensure that we have some documentation about the architectural choices an
 
 All these requirements needs to be satisfied:
 
-- [ ] The application must be implemented as a RESTful API using Java. You are free to choose a Java framework of your preference.
-- [ ] Ensure that the code is production-ready, adhering to best practices and design patterns.
-- [ ] Document the REST API endpoints and their usage for future reference.
-- [ ] Persist the data in a database for reliable storage and retrieval.
-- [ ] Include unit tests to verify the functionality of individual components.
-- [ ] Integration tests must be present to test the interaction between different parts of the application.
+- [x] The application must be implemented as a RESTful API using Java. You are free to choose a Java framework of your preference.
+
+[Spring Boot](https://spring.io/projects/spring-boot) was used for easily start the project, using [Spring Web](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html) for managing the REST API, [Spring Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html) for health-check, [Spring Data JPA](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference) for the DB connection, [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/html5/) for the API-Key validation and endpoint security checks.
+
+- [x] Ensure that the code is production-ready, adhering to best practices and design patterns.
+
+The code is well documented, it was commited using [ConventionalCommits](https://www.conventionalcommits.org/en/v1.0.0/), it logs where it is needed and was build using production-ready design patterns: Factory Pattern, Singleton, MVC, DTO, Repository, ec. It also include compile processors such as [Google Error Prone](https://errorprone.info/) and[Spring DevTools](https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot-devtools.html) to comply with standard best-practices.  
+
+- [x] Document the REST API endpoints and their usage for future reference.
+
+[springdoc-openapi](https://springdoc.org/) was used to automatically generate a SwaggerUI available at `/swagger-ui` and `/api-docs`.
+
+- [x] Persist the data in a database for reliable storage and retrieval.
+
+The application uses [Spring Data JPA](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference) ([Hibernate](https://hibernate.org/orm/documentation/5.5/)) for database connection, [H2 Database](https://www.h2database.com/html/main.html) in memory database for development environment (`spring.profile: dev`) and [MariaDB](https://mariadb.com/kb/en/documentation/) JDBC connector for production (`spring.profile: prod`), the later also available for develompent using the included Docker compose image. The Entity Mapping was done with [MapStruct](https://mapstruct.org/documentation/stable/reference/html/).
+
+- [x] Include unit tests to verify the functionality of individual components.
+
+[SpringBootTest](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing.spring-boot-applications) was used for Unit Tests, this includes [JUnit](https://junit.org/junit5/docs/current/user-guide/) and [Mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html).
+
+- [x] Integration tests must be present to test the interaction between different parts of the application.
+
+[SpringBootTest](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing.spring-boot-applications) and [AutoConfigureMockMvc](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing.spring-boot-applications.testing-autoconfigured-mvc-tests) were used to create the integration tests, using H2 in memory database for test environment.
+
+- [x] Container compatibility
+
+[Google JIB](https://cloud.google.com/java/getting-started/jib?hl=it) was used to build the Java Docker Image and Docker Containers for testing locally. 
 
 ---
 
