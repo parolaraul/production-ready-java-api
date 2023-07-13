@@ -74,4 +74,17 @@ public class Filter<FIELD_TYPE> {
     public void setNotContains(FIELD_TYPE notContains) {
         this.notContains = notContains;
     }
+
+    @Override
+    public String toString() {
+        String s = "Filter{";
+        if (eq != null) s += "eq=" + eq;
+        if (neq != null) s += "neq=" + neq;
+        if (in != null) s += "in=" + in;
+        if (nin != null) s += "nin=" + nin;
+        if (contains != null) s += "contains=" + contains;
+        if (notContains != null) s += "notContains=" + notContains;
+        s += '}';
+        return s;
+    }
 }

@@ -1,5 +1,6 @@
 package com.parolaraul.recipeapi.service.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -11,4 +12,10 @@ public record RecipeDTO(
         Integer servings,
         String instructions,
         Set<IngredientDTO> ingredients) {
+
+    public RecipeDTO {
+        if (ingredients == null) {
+            ingredients = new HashSet<>();
+        }
+    }
 }

@@ -56,6 +56,9 @@ public class IngredientResource {
         if (ingredientDTO.id() != null) {
             throw new BadRequestException("A new ingredient cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if (ingredientDTO.name() == null) {
+            throw new BadRequestException("Name must be present", ENTITY_NAME, "namenull");
+        }
         IngredientDTO result = ingredientService.save(ingredientDTO);
         return ResponseEntity
                 .created(new URI("/api/ingredients/" + result.id()))
