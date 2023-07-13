@@ -7,15 +7,10 @@ import com.parolaraul.recipeapi.service.dto.RecipeDTO;
 import com.parolaraul.recipeapi.service.mapper.RecipeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link Recipe}.
@@ -53,13 +48,6 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<RecipeDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Recipes");
-        return getPaginatedRecipes(pageable).map(recipeMapper::toDto);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Optional<RecipeDTO> findOne(Long id) {
         log.debug("Request to get Recipe : {}", id);
         return recipeRepository.findById(id).map(recipeMapper::toDto);
@@ -71,11 +59,4 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.deleteById(id);
     }
 
-    private Page<Recipe> getPaginatedRecipes(Pageable pageable) {
-        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
-        List<Long> recipeIds = recipePage.getContent().stream().map(Recipe::getId).collect(Collectors.toList());
-        List<Recipe> recipesWithIngredients = recipeRepository.findAllWithIngredientsByIds(recipeIds);
-
-        return new PageImpl<>(recipesWithIngredients, pageable, recipePage.getTotalElements());
-    }
 }

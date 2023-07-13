@@ -1,8 +1,6 @@
 package com.parolaraul.recipeapi.service;
 
 import com.parolaraul.recipeapi.service.dto.RecipeDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -25,14 +23,6 @@ public interface RecipeService {
      * @return the persisted entity.
      */
     RecipeDTO update(RecipeDTO recipeDTO);
-
-    /**
-     * Get all the recipes.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<RecipeDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" recipe.
