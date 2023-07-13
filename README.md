@@ -3,6 +3,10 @@
 This repository contains a simple Java API project that demonstrates best practices for building a production-ready API using Java +17. The project incorporates various features
 and technologies commonly used in professional Java applications: Spring Web, Docker, logging, unit tests, functional tests and monitoring.
 
+## Test Coverage
+91% Classes | 79% Methods | 74% Lines
+![img.png](img.png)
+
 ---
 
 # Assessment
