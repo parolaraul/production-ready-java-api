@@ -6,7 +6,8 @@ Project: RecipeAPI
 
 ## System Status
 
-Current Version: 1.0
+Current Version: 2.0
+Previous Version: 1.0
 
 ## Maintenance Notes
 
